@@ -30,4 +30,11 @@
         android:name="com.example.kelas_navigation_component.DetailProfileFragment"
         android:label="detail profile"
         tools:layout="@layout/fragment_detail_profile" />
+
+    <fragment
+        android:id="@+id/bahanFragment"
+        android:name="com.example.kelas_navigation_component.bahanFragment"
+        android:label="Bahan"
+        tools:layout="@layout/fragment_bahan"/>
+
 </navigation>
