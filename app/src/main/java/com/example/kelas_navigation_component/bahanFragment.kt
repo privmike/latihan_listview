@@ -1,14 +1,20 @@
 package com.example.kelas_navigation_component
 
+import android.app.AlertDialog
+import android.app.Dialog
 import android.os.Bundle
+import android.view.GestureDetector
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.ListView
+import android.widget.TextView
 import android.widget.Toast
 
 // TODO: Rename parameter arguments, choose names that match
@@ -72,6 +78,24 @@ class bahanFragment : Fragment() {
             tambahBahan()
         }
 
+        val gestureDetector = GestureDetector (
+            requireContext(),
+            object : GestureDetector.SimpleOnGestureListener(){
+                override fun onDoubleTap(e: MotionEvent): Boolean {
+                    val position = lvBahan.pointToPosition(e.x.toInt(), e.y.toInt())
+                    if (position!= ListView.INVALID_POSITION){
+                        val selecteditem = data[position]
+                        showActionDialog(position, selecteditem)
+                    }
+                    return true
+                }
+            }
+        )
+        lvBahan.setOnTouchListener { _, event ->
+            gestureDetector.onTouchEvent(event)
+        }
+        adapter.notifyDataSetChanged()
+
 
     }
 
@@ -89,6 +113,83 @@ class bahanFragment : Fragment() {
 
         etNamaBhan.text.clear()
         etKategori.text.clear()
+
+    }
+
+    private fun showActionDialog(
+        position: Int,
+        bahan: Bahan){
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setMessage("Tentukan Aksi anda untuk ${bahan.nama}")
+        builder.setTitle("Aksi")
+
+        builder.setNegativeButton("Hapus"){ _, _ ->
+
+            data.removeAt(position)
+            adapter.notifyDataSetChanged()
+
+
+        }
+
+        builder.setPositiveButton("Update"){_, _ ->
+            showUpdateDialog(position, bahan)
+
+        }
+        builder.setNeutralButton("Batal"){dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.create().show()
+    }
+
+    private fun showUpdateDialog(
+        position: Int,
+        bahan: Bahan
+    ){
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Update kategori untuk ${bahan.nama}")
+
+        val layout = LinearLayout(context)
+        layout.orientation = LinearLayout.VERTICAL
+        layout.setPadding(50,40,50,10)
+
+        val textviewOld = TextView(context)
+        textviewOld.text = "Data kategori Lama : ${bahan.kategori}"
+        textviewOld.textSize = 16f
+
+        val editext = EditText(context)
+        editext.hint = "Masukan kategori baru"
+        editext.setText(bahan.kategori)
+
+        layout.addView(textviewOld)
+        layout.addView(editext)
+
+        builder.setView(layout)
+
+        builder.setPositiveButton("Simpan"){ dialog, _ ->
+            val newKategori = editext.text.toString().trim()
+            if (newKategori.isNotEmpty()){
+                data[position].kategori = newKategori
+                adapter.notifyDataSetChanged()
+                Toast.makeText(
+                    context,
+                    "Data Diupdate jadi $newKategori",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }else{
+                Toast.makeText(
+                    context,
+                    "Data baru tidak boleh kosong",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
+        builder.setNegativeButton("Batal"){ dialog, _ ->
+            dialog.dismiss()
+        }
+
+        builder.create().show()
+
 
     }
     companion object {
