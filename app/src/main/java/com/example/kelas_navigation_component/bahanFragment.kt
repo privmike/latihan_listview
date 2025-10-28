@@ -5,6 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ListView
+import android.widget.Toast
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -29,6 +34,17 @@ class bahanFragment : Fragment() {
         }
     }
 
+
+
+    private val data = mutableListOf<Bahan>()
+    private lateinit var adapter : ArrayAdapter<Bahan>
+
+    private lateinit var etNamaBhan: EditText
+    private lateinit var etKategori: EditText
+    private lateinit var btnTambahBahan: Button
+    private lateinit var lvBahan: ListView
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -37,6 +53,44 @@ class bahanFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_bahan, container, false)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        etNamaBhan = view.findViewById<EditText>(R.id.et_nama_bahan)
+        etKategori = view.findViewById<EditText>(R.id.et_kategori_bahan)
+        btnTambahBahan = view.findViewById<Button>(R.id.btn_tambah_bahan)
+        lvBahan = view.findViewById<ListView>(R.id.lv_bahan)
+
+        adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_list_item_1,
+            data
+        )
+        lvBahan.adapter  = adapter
+
+        btnTambahBahan.setOnClickListener {
+            tambahBahan()
+        }
+
+
+    }
+
+    private fun tambahBahan(){
+        val nama = etNamaBhan.text.toString().trim()
+        val kategori = etKategori.text.toString().trim()
+
+        if (nama.isEmpty() || kategori.isEmpty()){
+            Toast.makeText(context, "data harus lengkap",Toast.LENGTH_SHORT)
+            return
+        }
+        val bahanbaru = Bahan(nama,kategori)
+        data.add(bahanbaru)
+        adapter.notifyDataSetChanged()
+
+        etNamaBhan.text.clear()
+        etKategori.text.clear()
+
+    }
     companion object {
         /**
          * Use this factory method to create a new instance of
