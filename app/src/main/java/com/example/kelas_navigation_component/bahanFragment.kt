@@ -16,6 +16,8 @@ import android.widget.LinearLayout
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -43,12 +45,13 @@ class bahanFragment : Fragment() {
 
 
     private val data = mutableListOf<Bahan>()
-    private lateinit var adapter : ArrayAdapter<Bahan>
+    private lateinit var adapter : BahanAdapter
 
     private lateinit var etNamaBhan: EditText
     private lateinit var etKategori: EditText
+    private lateinit var etUrl : EditText
     private lateinit var btnTambahBahan: Button
-    private lateinit var lvBahan: ListView
+    private lateinit var rvbahan: RecyclerView
 
 
     override fun onCreateView(
@@ -64,55 +67,44 @@ class bahanFragment : Fragment() {
 
         etNamaBhan = view.findViewById<EditText>(R.id.et_nama_bahan)
         etKategori = view.findViewById<EditText>(R.id.et_kategori_bahan)
+        etUrl = view.findViewById<EditText>(R.id.et_url)
         btnTambahBahan = view.findViewById<Button>(R.id.btn_tambah_bahan)
-        lvBahan = view.findViewById<ListView>(R.id.lv_bahan)
+        rvbahan = view.findViewById(R.id.item_bahan)
 
-        adapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_list_item_1,
-            data
-        )
-        lvBahan.adapter  = adapter
+        adapter = BahanAdapter(data)
+
+        rvbahan.layoutManager = LinearLayoutManager(requireContext())
+        rvbahan.adapter= adapter
+
 
         btnTambahBahan.setOnClickListener {
             tambahBahan()
         }
 
-        val gestureDetector = GestureDetector (
-            requireContext(),
-            object : GestureDetector.SimpleOnGestureListener(){
-                override fun onDoubleTap(e: MotionEvent): Boolean {
-                    val position = lvBahan.pointToPosition(e.x.toInt(), e.y.toInt())
-                    if (position!= ListView.INVALID_POSITION){
-                        val selecteditem = data[position]
-                        showActionDialog(position, selecteditem)
-                    }
-                    return true
-                }
-            }
-        )
-        lvBahan.setOnTouchListener { _, event ->
-            gestureDetector.onTouchEvent(event)
-        }
+
         adapter.notifyDataSetChanged()
 
 
     }
 
     private fun tambahBahan(){
+
+
         val nama = etNamaBhan.text.toString().trim()
         val kategori = etKategori.text.toString().trim()
+        val url = etUrl.text.toString().trim()
 
         if (nama.isEmpty() || kategori.isEmpty()){
             Toast.makeText(context, "data harus lengkap",Toast.LENGTH_SHORT)
             return
         }
-        val bahanbaru = Bahan(nama,kategori)
+        val bahanbaru = Bahan(nama,kategori,url)
         data.add(bahanbaru)
-        adapter.notifyDataSetChanged()
+        adapter.notifyItemInserted(data.size-1)
 
         etNamaBhan.text.clear()
         etKategori.text.clear()
+        etUrl.text.clear()
 
     }
 

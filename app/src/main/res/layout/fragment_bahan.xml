@@ -7,10 +7,10 @@
     android:orientation="vertical"
     android:weightSum="1">
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/lv_bahan"
+        android:id="@+id/item_bahan"
         android:layout_weight="1"/>
 
     <TextView
@@ -36,14 +36,24 @@
         android:layout_height="wrap_content"
         android:hint="Kategori (misal: Bumbu)"
         android:padding="8dp"/>
+    <EditText
+        android:id="@+id/et_url"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="url"
+        android:padding="8dp"/>
 <!--        android:layout_weight="2"/>-->
+    
+
 
     <Button
         android:id="@+id/btn_tambah_bahan"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:text="Tambah Bahan"
-        android:padding="8dp"/>
+        android:background="@drawable/cart"
+        android:layout_gravity="center"
+        android:padding="16dp"/>
 <!--        android:layout_weight="2"/>-->
 
 
